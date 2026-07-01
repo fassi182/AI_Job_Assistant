@@ -9,3 +9,4 @@ langchain-core>=1.2.5
 langchain-groq
 langgraph-sdk
 python-multipart
+langgraph
