@@ -7,9 +7,7 @@ generated email and a download link for the tailored resume PDF.
 import os
 import requests
 import streamlit as st
-
-BACKEND_URL = os.getenv("BACKEND_URL", "https://ai-job-assistant-oyxg.onrender.com/")
-
+BACKEND_URL = os.getenv("BACKEND_URL", "https://ai-job-assistant-oyxg.onrender.com")
 st.set_page_config(page_title="AI Job Application Assistant", page_icon="📄", layout="centered")
 
 st.title("📄 AI Job Application Assistant")
