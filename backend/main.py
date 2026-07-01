@@ -7,6 +7,21 @@ import os
 import uuid
 import shutil
 from typing import Optional
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+
+# Get the allowed origin from an environment variable (default to empty list if not set)
+# In production, set this to your actual frontend URL, e.g., "https://your-app.streamlit.app"
+ALLOWED_ORIGIN = os.getenv("ALLOWED_ORIGIN", "https://aijobassistant-fy4y45ybjh8rpag7mqyjky.streamlit.app/")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[ALLOWED_ORIGIN], # This now uses the variable
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
