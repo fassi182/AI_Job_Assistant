@@ -9,6 +9,7 @@ venv/
 env/
 backend/backendvenv/
 frontend/frontendvenv/
+newenv/
 
 # Environment files
 .env
