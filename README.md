@@ -1,63 +1,86 @@
 # AI Job Application Assistant
 
-This project is a full-stack AI assistant for turning a candidate's resume and a target job posting into a personalized application package. It uses FastAPI on the backend, Streamlit on the frontend, and a LangGraph workflow to orchestrate the job analysis and content generation steps.
+AI Job Application Assistant transforms a candidate's resume and job posting information into a personalized application package. The solution uses a Python backend with FastAPI, a Streamlit frontend interface, and a LangGraph workflow to manage the AI agent pipeline.
 
-## What it does
+## Overview
 
-The app lets a user:
-- upload an existing resume PDF
-- provide a job URL, job description, and/or a screenshot of a job ad
-- optionally share company and profile details for better personalization
-- receive:
-  - a tailored application email subject and body
-  - a tailored resume summary, skills, experience bullets, and project bullets
+The system accepts:
+- a resume PDF upload
+- a job posting URL, job description text, and/or a job ad screenshot
+- optional company details and candidate profile fields
 
-## Project structure
+It produces:
+- a customized application email subject and body
+- tailored resume content for summary, skills, experience, and projects
+- structured job and company insights for better alignment with the role
+
+## Deployments
+
+- Backend deployed on Render: https://ai-job-assistant-oyxg.onrender.com/
+- Frontend deployed on Streamlit: https://aijobassistant-ujfmrkkpzuacf5mvuxtuej.streamlit.app/
+
+The Streamlit frontend is configured to use the Render backend URL by default in `frontend/app.py`.
+
+## Architecture
 
 ```text
 ai-job-application-assistant/
 ├── backend/
-│   ├── main.py                  # FastAPI entrypoint and API routes
-│   ├── config.py                # Environment-based settings
-│   ├── requirements.txt
+│   ├── main.py                  # FastAPI application and API routes
+│   ├── config.py                # environment and runtime settings
+│   ├── requirements.txt         # backend dependencies
 │   ├── graph/
-│   │   ├── state.py             # LangGraph shared state
-│   │   ├── workflow.py          # Compiled LangGraph workflow
-│   │   └── nodes/               # Workflow nodes
+│   │   ├── state.py             # shared LangGraph state schema
+│   │   ├── workflow.py          # compiled LangGraph workflow graph
+│   │   └── nodes/               # workflow node implementations
 │   ├── models/
-│   │   └── schemas.py           # Pydantic response models
-│   ├── services/                # LLM, scraping, and PDF helpers
-│   └── storage/                 # Upload and output folders
+│   │   └── schemas.py           # Pydantic request/response models
+│   ├── services/                # LLM, scraping, and PDF helper utilities
+│   └── storage/                 # upload/output directories
 ├── frontend/
 │   └── app.py                   # Streamlit frontend UI
-├── workflow_diagram.ipynb       # Notebook for visualizing the LangGraph workflow
+├── workflow_diagram.ipynb       # visualization notebook for the LangGraph workflow
 └── README.md
 ```
 
-## LangGraph workflow
+## AI workflow graph
 
-The workflow currently follows this sequence:
+The backend AI agent is implemented as a LangGraph graph. The workflow execution path is:
 
 ```text
 extract_resume -> extract_job_image -> parse_job -> research_company -> optimize_resume -> generate_email
 ```
 
-Each step is implemented as a node in the LangGraph graph and can be inspected or visualized with the included notebook.
+Node responsibilities:
+- `extract_resume`: parse resume content from the uploaded PDF
+- `extract_job_image`: extract text from an optional job ad image
+- `parse_job`: structure job details from URL or pasted description
+- `research_company`: enrich company context using the provided site or job data
+- `optimize_resume`: generate tailored resume sections for the target role
+- `generate_email`: compose a role-specific application email
 
-## Setup
+## Tech stack
 
-1. Create a `.env` file in the project root with at least:
+- Python
+- FastAPI
+- Streamlit
+- LangGraph
+- LangChain / Groq
+- LangSmith tracing and monitoring
+- Pydantic / pydantic-settings
+- requests + BeautifulSoup
+- PyMuPDF
+
+## Local setup
+
+1. Create a `.env` file in the project root with required API keys and LangSmith configuration:
 
 ```env
 GROQ_API_KEY=your_groq_api_key
-```
-
-Optional settings for tracing:
-
-```env
-LANGCHAIN_API_KEY=your_langsmith_key
+LANGCHAIN_API_KEY=your_langchain_api_key
 LANGCHAIN_TRACING_V2=true
 LANGCHAIN_PROJECT=ai-job-application-assistant
+LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
 ```
 
 2. Install backend dependencies:
@@ -67,13 +90,13 @@ cd backend
 pip install -r requirements.txt
 ```
 
-3. Start the backend:
+3. Start the backend locally:
 
 ```bash
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-4. In a second terminal, install and run the frontend:
+4. Install frontend dependencies and run Streamlit:
 
 ```bash
 cd frontend
@@ -81,16 +104,8 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-5. Open the Streamlit UI in your browser and generate an application.
-
-## Workflow notebook
-
-To inspect the LangGraph workflow visually, run:
-
-```bash
-jupyter notebook workflow_diagram.ipynb
-```
+5. Open the frontend in your browser and test the application.
 
 ## Notes
 
-The app is designed to be easy to extend. You can add more nodes to the workflow, improve the resume tailoring logic, or connect additional services for deeper job research and enrichment.
+This repository is organized to support further workflow extension, improved PDF processing, and richer frontend behavior. The deployed Render backend and Streamlit frontend demonstrate the integrated production endpoints.
